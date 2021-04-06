@@ -77,7 +77,7 @@ $(".list-group").on("blur", "textarea", function() {
 
   //get the task's position in the list of other li elements
   var index = $(this)
-    .closest(".list-group-itme")
+    .closest(".list-group-item")
     //child elements are indexed starting at zero like arrays
     .index();
   //tasks is an object
@@ -89,11 +89,64 @@ $(".list-group").on("blur", "textarea", function() {
 
   //recreate p element
   var taskP = $("<p>")
-    .addClass("m-1)
+    .addClass("m-1")
     .text(text);
 
   //replace textarea with p element
   $(this).replaceWith(taskP);
+});
+
+//due date was clicked
+$(".list-group").on("click", "span", function() {
+  //get current text
+  var date = $(this)
+    .text()
+    .trim();
+
+  //create new input element
+  var dateInput = $("<input>")
+    //attr() with 1 argument, gets an attribute
+    //attr() with 2 arguments, it sets an attribute
+    .attr("type", "text")
+    .addClass("form-control")
+    .val(date);
+
+  //swap out elements
+  $(this).replaceWith(dateInput);
+
+  //automatically focus on new element
+  dateInput.trigger("focus");
+});
+
+//value of due date was change
+$(".list-group").on("blur", "input[type='text']", function() {
+  //get current text
+  var date = $(this)
+    .val()
+    .trim();
+
+  //get the parent ul's id attribute
+  var status = $(this)
+    .closest (".list-group")
+    .attr("id")
+    .replace("list-", "");
+
+  //get the task's position in the list of other li elements
+  var index = $(this)
+    .closest(".list-group-item")
+    .index();
+
+  //update task in array and re-save to localstorage
+  tasks[status][index].date = date;
+  saveTasks();
+
+  //recreate span element with boostrap classes
+  var taskSpan = $("<span>")
+    .addClass("badge badge-primary badge-pill")
+    .text(date);
+
+  //replace input with span element
+  $(this).replaceWith(taskSpan);
 });
 
 // modal was triggered
